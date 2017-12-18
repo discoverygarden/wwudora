@@ -177,7 +177,7 @@
     </xsl:template>
 
     <xsl:template match="mods:originInfo">
-        <xsl:for-each select="mods:dateOther[@type='harvest-edtf']">
+        <xsl:for-each select="mods:dateOther[@type='harvest-oai']">
             <dc:date>
                 <xsl:value-of select="normalize-space(.)"/>
             </dc:date>
