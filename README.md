@@ -1,15 +1,13 @@
-# MODULE NAME
+# WWUdora
 
 ## Introduction
 
-DESCRIPTION
+Customizations for Western Washington University.
 
 ## Requirements
 
-This module requires the following modules/libraries:
-
 * [Islandora](https://github.com/islandora/islandora)
-* [Tuque](https://github.com/islandora/tuque)
+* [Islandora OAI](https://github.com/islandora/islandora_oai)
 
 ## Installation
 

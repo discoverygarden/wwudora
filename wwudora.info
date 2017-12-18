@@ -1,0 +1,7 @@
+name = WWUdora
+dependencies[] = islandora
+dependencies[] = islandora_oai
+description = Customizations for Western Washington University
+package = Islandora Tools
+version = 7.x-dev
+core = 7.x
