@@ -34,10 +34,19 @@ function wwudora_islandora_datastream_modified($object, $datastream, $params) {
  */
 function wwudora_islandora_compound_object_children_added_to_parent($children, $parent_pids) {
   $parent = islandora_object_load(current($parent_pids));
-  if ($parent['POLICY']) {
-    foreach ($children as $child) {
-      $child->relationships->add(ISLANDORA_RELS_EXT_URI, 'inheritXacmlFrom', $parent->id, RELS_TYPE_URI);
+  foreach ($children as $child) {
+    $child->relationships->remove(ISLANDORA_RELS_EXT_URI, 'inheritXacmlFrom', NULL, RELS_TYPE_URI);
+    $child->relationships->add(ISLANDORA_RELS_EXT_URI, 'inheritXacmlFrom', $parent->id, RELS_TYPE_URI);
+    if ($parent['POLICY']) {
       $xacml = new IslandoraXacml($child, $parent['POLICY']->content);
+      $xacml->writeBackToFedora();
+    }
+    elseif ($child['POLICY']) {
+      // Removing Child's existing Policy if new Parent doesn't have one.
+      $xacml = new IslandoraXacml($child);
+      $xacml->datastreamRule->clear();
+      $xacml->managementRule->clear();
+      $xacml->viewingRule->clear();
       $xacml->writeBackToFedora();
     }
   }
@@ -56,6 +65,7 @@ function wwudora_inherit_xacml_from_compound_parent(AbstractObject $object, Abst
     $children = islandora_compound_object_get_parts($object, TRUE);
     foreach ($children as $child) {
       $childObj = islandora_object_load($child['pid']);
+      $childObj->relationships->remove(ISLANDORA_RELS_EXT_URI, 'inheritXacmlFrom', NULL, RELS_TYPE_URI);
       $childObj->relationships->add(ISLANDORA_RELS_EXT_URI, 'inheritXacmlFrom', $object->id, RELS_TYPE_URI);
       $xacml = new IslandoraXacml($childObj, $object['POLICY']->content);
       $xacml->writeBackToFedora();
