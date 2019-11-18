@@ -44,7 +44,7 @@ function wwudora_islandora_compound_object_children_added_to_parent($children, $
 }
 
 /**
- * Apply parent policies to children of compound objects if policy is ingested or modified.
+ * Apply compound object policies to children if is ingested or modified.
  *
  * @param AbstractObject $object
  *   An AbstractObject of the parent object.
