@@ -19,6 +19,7 @@ function wwudora_islandora_oai_get_xsl_files() {
  * Implements hook_islandora_datastream_ingested().
  */
 function wwudora_islandora_datastream_ingested($object, $datastream) {
+  module_load_include('inc', 'wwudora', 'includes/inherit_xacml_from_compound_parent');
   wwudora_inherit_xacml_from_compound_parent($object, $datastream);
 }
 
@@ -26,6 +27,7 @@ function wwudora_islandora_datastream_ingested($object, $datastream) {
  * Implements hook_islandora_datastream_modified().
  */
 function wwudora_islandora_datastream_modified($object, $datastream, $params) {
+  module_load_include('inc', 'wwudora', 'includes/inherit_xacml_from_compound_parent');
   wwudora_inherit_xacml_from_compound_parent($object, $datastream);
 }
 
@@ -47,27 +49,6 @@ function wwudora_islandora_compound_object_children_added_to_parent($children, $
       $xacml->datastreamRule->clear();
       $xacml->managementRule->clear();
       $xacml->viewingRule->clear();
-      $xacml->writeBackToFedora();
-    }
-  }
-}
-
-/**
- * Apply compound object policies to children if is ingested or modified.
- *
- * @param AbstractObject $object
- *   An AbstractObject of the parent object.
- * @param AbstractDatastream $datastream
- *   An AbstractDatastream of the datastream added to the parent object.
- */
-function wwudora_inherit_xacml_from_compound_parent(AbstractObject $object, AbstractDatastream $datastream) {
-  if ($datastream->id == "POLICY" && in_array("islandora:compoundCModel", $object->models)) {
-    $children = islandora_compound_object_get_parts($object, TRUE);
-    foreach ($children as $child) {
-      $childObj = islandora_object_load($child['pid']);
-      $childObj->relationships->remove(ISLANDORA_RELS_EXT_URI, 'inheritXacmlFrom', NULL, RELS_TYPE_URI);
-      $childObj->relationships->add(ISLANDORA_RELS_EXT_URI, 'inheritXacmlFrom', $object->id, RELS_TYPE_URI);
-      $xacml = new IslandoraXacml($childObj, $object['POLICY']->content);
       $xacml->writeBackToFedora();
     }
   }
