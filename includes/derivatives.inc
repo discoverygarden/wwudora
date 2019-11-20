@@ -2,7 +2,7 @@
 
 /**
  * @file
- *  Fixes Derivative Policy issues
+ * Fixes Derivative Policy issues.
  */
 
 /**
@@ -16,12 +16,17 @@
  * @return array
  *   Success message.
  */
-function wwudora_policy_to_children_derivatives(AbstractObject $object, $force = FALSE) {
-  try {  
-    module_load_include('inc', 'wwudora', 'includes/inherit_xacml_from_compound_parent');
-    inherit_xacml_from_compound_parent($object);
+function wwudora_policy_to_children_derivatives(AbstractObject $parent, $force = FALSE) {
+  try {
+    $children = islandora_compound_object_get_parts($parent, TRUE);
+    if ($children) {
+      foreach ($children as $child) {
+        $child_obj = islandora_object_load($child['pid']);
+        wwudora_inherit_xacml_from_compound_parent($parent, $child_obj);
+      }
+    }
   }
-  catch(Exception $e) {
+  catch (Exception $e) {
     return array(
       'success' => FALSE,
       'messages' => array(
@@ -55,84 +60,33 @@ function wwudora_policy_to_children_derivatives(AbstractObject $object, $force =
 }
 
 /**
- * Update parent from child object.
+ * Apply compound object policies to a child.
  *
- * Given a child object, check to see if it is part of
- * a compound and update the parent's TN datastream.
- * Child objects of objects whose content model is NOT
- * islandora:compoundCModel will be ignored by this functionality.
- * Only islandora:compoundCModel parents will run a derivative to
- * check their children for TN sync. We add this check here to ensure
- * that the inverse is also true and the non-compound child don't try
- * to change their parents.
- *
+ * @param AbstractObject $parent
+ *   An AbstractObject of the parent object.
  * @param AbstractObject $child
- *   The potential child object.
- * @param bool $force
- *   Boolean for forcing this derivative creation.
- *
- * @return array|null
- *   Success message.
+ *   An AbstractObject of the child object.
  */
-function islandora_compound_object_create_thumbnail_on_parent(AbstractObject $child, $force = TRUE) {
-  // Test if child has a parent.
-  $compound_info = islandora_compound_object_retrieve_compound_info($child);
-  if (empty($compound_info)) {
-    return NULL;
+function wwudora_inherit_xacml_from_compound_parent(AbstractObject $parent, AbstractObject $child) {
+
+  // Removes any existing inheritXacmlFrom relationships from other parents.
+  if (!$child->relationships->get(ISLANDORA_RELS_EXT_URI, 'inheritXacmlFrom', $parent->id, RELS_TYPE_URI)) {
+    $child->relationships->remove(ISLANDORA_RELS_EXT_URI, 'inheritXacmlFrom', NULL, RELS_TYPE_URI);
+    $child->relationships->add(ISLANDORA_RELS_EXT_URI, 'inheritXacmlFrom', $parent->id, RELS_TYPE_URI);
   }
-  if ($force || !isset($compound_info['TN'])) {
-    // Test if child is the first child of the compound.
-    if (empty($compound_info['previous_pid'])) {
 
-      $parent = islandora_object_load($compound_info['parent_pid']);
-      // Ignore objects which aren't explicitly compound objects.
-      if (!in_array('islandora:compoundCModel', $parent->models)) {
-        return NULL;
-      }
+  // Settings Child's Policy to the Parent's.
+  if (isset($parent['POLICY']) && (!isset($child['POLICY']) || !($parent['POLICY']->content === $child['POLICY']->content))) {
+    $xacml = new IslandoraXacml($child, $parent['POLICY']->content);
+    $xacml->writeBackToFedora();
+  }
 
-      // Child doesn't have a thumbnail then we can't set the parents TN either.
-      if (empty($child['TN'])) {
-        // Parents with first children with no TN shouldn't have one either.
-        if (isset($parent['TN'])) {
-          $parent->purgeDatastream('TN');
-        }
-        return NULL;
-      }
-      try {
-        islandora_compound_object_update_parent_thumbnail($parent, $child);
-      }
-      catch (Exception $e) {
-        return array(
-          'success' => FALSE,
-          'messages' => array(
-            array(
-              'message' => t('Failed to update @dsid on @parent.'),
-              'message_sub' => array(
-                '@dsid' => 'TN',
-                '@parent' => $parent->id,
-              ),
-              'type' => 'watchdog',
-              'severity' => WATCHDOG_ERROR,
-            ),
-          ),
-        );
-      }
-
-      return array(
-        'success' => TRUE,
-        'messages' => array(
-          array(
-            'message' => t('Updated @dsid on @parent.'),
-            'message_sub' => array(
-              '@dsid' => 'TN',
-              '@parent' => $parent->id,
-            ),
-            'type' => 'dsm',
-            'severity' => 'status',
-          ),
-        ),
-      );
-    }
+  // Removing Child's existing Policy if the Parent doesn't have one.
+  elseif (isset($child['POLICY']) && !isset($parent['POLICY'])) {
+    $xacml = new IslandoraXacml($child);
+    $xacml->datastreamRule->clear();
+    $xacml->managementRule->clear();
+    $xacml->viewingRule->clear();
+    $xacml->writeBackToFedora();
   }
 }
-

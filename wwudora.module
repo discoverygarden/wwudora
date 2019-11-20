@@ -16,43 +16,13 @@ function wwudora_islandora_oai_get_xsl_files() {
 }
 
 /**
- * Implements hook_islandora_datastream_ingested().
- */
-/*
-function wwudora_islandora_datastream_ingested($object, $datastream) {
-  module_load_include('inc', 'wwudora', 'includes/inherit_xacml_from_compound_parent');
-  wwudora_inherit_xacml_from_compound_parent($object, $datastream);
-}*/
-
-/**
- * Implements hook_islandora_datastream_modified().
- */
-/*
-function wwudora_islandora_datastream_modified($object, $datastream, $params) {
-  module_load_include('inc', 'wwudora', 'includes/inherit_xacml_from_compound_parent');
-  wwudora_inherit_xacml_from_compound_parent($object, $datastream);
-}*/
-
-/**
  * Implements hook_islandora_compound_object_children_added_to_parent().
  */
 function wwudora_islandora_compound_object_children_added_to_parent($children, $parent_pids) {
   $parent = islandora_object_load(current($parent_pids));
   foreach ($children as $child) {
-    $child->relationships->remove(ISLANDORA_RELS_EXT_URI, 'inheritXacmlFrom', NULL, RELS_TYPE_URI);
-    $child->relationships->add(ISLANDORA_RELS_EXT_URI, 'inheritXacmlFrom', $parent->id, RELS_TYPE_URI);
-    if ($parent['POLICY']) {
-      $xacml = new IslandoraXacml($child, $parent['POLICY']->content);
-      $xacml->writeBackToFedora();
-    }
-    elseif ($child['POLICY']) {
-      // Removing Child's existing Policy if new Parent doesn't have one.
-      $xacml = new IslandoraXacml($child);
-      $xacml->datastreamRule->clear();
-      $xacml->managementRule->clear();
-      $xacml->viewingRule->clear();
-      $xacml->writeBackToFedora();
-    }
+    module_load_include('inc', 'wwudora', 'includes/derivatives');
+    wwudora_inherit_xacml_from_compound_parent($parent, $child);
   }
 }
 
@@ -61,9 +31,7 @@ function wwudora_islandora_compound_object_children_added_to_parent($children, $
  *
  * @see hook_cmodel_pid_islandora_derivative()
  */
-function wwudora_islandora_compoundCModel_islandora_derivative($object, $ds_modified_params = array()) {
-  dpm($object, "DERIV - OBJECT");
-  dpm($ds_modified_params, "DERIV - DS PARAMS");
+function wwudora_islandora_compoundcmodel_islandora_derivative($object, $ds_modified_params = array()) {
   $derivatives[] = array(
     'source_dsid' => 'POLICY',
     'weight' => '0',
