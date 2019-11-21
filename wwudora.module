@@ -23,9 +23,9 @@ function wwudora_islandora_compound_object_children_added_to_parent($children, $
    * 1. Client expects children to only exist on one Compound Object
    * 2. Each Policy would be overwritten by subsequent parents
    */
+  module_load_include('inc', 'wwudora', 'includes/derivatives');
   $parent = islandora_object_load(current($parent_pids));
   foreach ($children as $child) {
-    module_load_include('inc', 'wwudora', 'includes/derivatives');
     wwudora_inherit_xacml_from_compound_parent($parent, $child);
   }
 }
