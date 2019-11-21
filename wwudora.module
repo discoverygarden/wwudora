@@ -14,3 +14,33 @@ function wwudora_islandora_oai_get_xsl_files() {
     "$module_path/xml/wwu_mods_to_dc.xsl" => 'wwu_mods_to_dc.xsl',
   );
 }
+
+/**
+ * Implements hook_islandora_compound_object_children_added_to_parent().
+ */
+function wwudora_islandora_compound_object_children_added_to_parent($children, $parent_pids) {
+  /* We're only taking the first entry in the $parent_pids because:
+   * 1. Client expects children to only exist on one Compound Object
+   * 2. Each Policy would be overwritten by subsequent parents
+   */
+  module_load_include('inc', 'wwudora', 'includes/derivatives');
+  $parent = islandora_object_load(current($parent_pids));
+  foreach ($children as $child) {
+    wwudora_inherit_xacml_from_compound_parent($parent, $child);
+  }
+}
+
+/**
+ * Implements hook_CMODEL_PID_islandora_derivative().
+ */
+function wwudora_islandora_compoundcmodel_islandora_derivative($object, $ds_modified_params = array()) {
+  $derivatives[] = array(
+    'source_dsid' => 'POLICY',
+    'weight' => '0',
+    'function' => array(
+      'wwudora_policy_to_children_derivatives',
+    ),
+    'file' => drupal_get_path('module', 'wwudora') . '/includes/derivatives.inc',
+  );
+  return $derivatives;
+}
