@@ -19,6 +19,10 @@ function wwudora_islandora_oai_get_xsl_files() {
  * Implements hook_islandora_compound_object_children_added_to_parent().
  */
 function wwudora_islandora_compound_object_children_added_to_parent($children, $parent_pids) {
+  /* We're only taking the first entry in the $parent_pids because:
+   * 1. Client expects children to only exist on one Compound Object
+   * 2. Each Policy would be overwritten by subsequent parents
+   */
   $parent = islandora_object_load(current($parent_pids));
   foreach ($children as $child) {
     module_load_include('inc', 'wwudora', 'includes/derivatives');
@@ -27,9 +31,7 @@ function wwudora_islandora_compound_object_children_added_to_parent($children, $
 }
 
 /**
- * Content model specific version of hook_islandora_derivative().
- *
- * @see hook_cmodel_pid_islandora_derivative()
+ * Implements hook_CMODEL_PID_islandora_derivative().
  */
 function wwudora_islandora_compoundcmodel_islandora_derivative($object, $ds_modified_params = array()) {
   $derivatives[] = array(

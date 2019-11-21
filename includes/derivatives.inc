@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Fixes Derivative Policy issues.
+ * Contains derivative functionality for WWU.
  */
 
 /**
