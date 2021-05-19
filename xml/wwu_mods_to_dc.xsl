@@ -270,6 +270,48 @@
         <xsl:if test=".='notated music'">
             <dc:type>Text</dc:type>
         </xsl:if>
+        <xsl:if test=".='Artifact'">
+            <dc:type>PhysicalObject</dc:type>
+        </xsl:if>
+        <xsl:if test=".='Audio'">
+            <dc:type>Sound</dc:type>
+        </xsl:if>
+        <xsl:if test=".='Cartographic'">
+            <dc:type>Image</dc:type>
+        </xsl:if>
+        <xsl:if test=".='Collection'">
+            <dc:type>Collection</dc:type>
+        </xsl:if>
+        <xsl:if test=".='Dataset'">
+            <dc:type>Dataset</dc:type>
+        </xsl:if>
+        <xsl:if test=".='Digital'">
+            <dc:type>InteractiveResource</dc:type>
+        </xsl:if>
+        <xsl:if test=".='Manuscript'">
+            <dc:type>Text</dc:type>
+        </xsl:if>
+        <xsl:if test=".='Mixed material'">
+            <dc:type>Collection</dc:type>
+        </xsl:if>
+        <xsl:if test=".='Moving image'">
+            <dc:type>MovingImage</dc:type>
+        </xsl:if>
+        <xsl:if test=".='Multimedia'">
+            <dc:type>InteractiveResource</dc:type>
+        </xsl:if>
+        <xsl:if test=".='Notated music'">
+            <dc:type>Image</dc:type>
+        </xsl:if>
+        <xsl:if test=".='Still image'">
+            <dc:type>StillImage</dc:type>
+        </xsl:if>
+        <xsl:if test=".='Tactile'">
+            <dc:type>PhysicalObject</dc:type>
+        </xsl:if>
+        <xsl:if test=".='Text'">
+            <dc:type>Text</dc:type>
+        </xsl:if>     
     </xsl:template>
 
     <xsl:template match="mods:physicalDescription">
