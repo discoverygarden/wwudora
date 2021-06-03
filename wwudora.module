@@ -16,6 +16,16 @@ function wwudora_islandora_oai_get_xsl_files() {
 }
 
 /**
+ * Implements hook_xml_form_builder_get_transforms().
+ */
+function wwudora_xml_form_builder_get_transforms() {
+  $module_path = drupal_get_path('module', 'wwudora');
+  return array(
+    'wwu_mods_to_dc.xsl' => "$module_path/xml/wwu_mods_to_dc.xsl",
+  );
+}
+
+/**
  * Implements hook_islandora_compound_object_children_added_to_parent().
  */
 function wwudora_islandora_compound_object_children_added_to_parent($children, $parent_pids) {
