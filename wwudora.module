@@ -54,3 +54,33 @@ function wwudora_islandora_compoundcmodel_islandora_derivative($object, $ds_modi
   );
   return $derivatives;
 }
+
+function wwudora_islandora_datastream_ingested(AbstractObject $object, AbstractDatastream $datastream) {
+  _wwudora_transform_mods_to_dc($datastream);
+}
+
+function wwudora_islandora_datastream_modified(AbstractObject $object, AbstractDatastream $datastream, array $params) {
+  _wwudora_transform_mods_to_dc($datastream);
+}
+
+function _wwudora_transform_mods_to_dc(AbstractDatastream $datastream) {
+  if ($datastream->id == "MODS") {
+    $module_path = drupal_get_path('module', 'wwudora');
+    $transform_path = "$module_path/xml/wwu_mods_to_dc.xsl";
+
+    $transform = new DOMDocument();
+    $transform->load($transform_path);
+
+    $xslt = new XSLTProcessor();
+    $xslt->importStyleSheet($transform);
+
+    $mods = new DOMDocument();
+    $mods->loadXML($datastream->content);
+
+    $dc = $xslt->transformToDoc($mods);
+    if ($dc && isset($dc->documentElement)) {
+      $object = $datastream->parent;
+      $object["DC"]->setContentFromString($dc->saveXML());
+    }
+  }
+}
