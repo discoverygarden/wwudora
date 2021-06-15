@@ -341,7 +341,7 @@
     <xsl:template match="mods:identifier">
         <xsl:variable name="type" select="translate(@type,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')"/>
         <xsl:choose>
-            <xsl:when test="contains ('isbn issn uri doi lccn uri', $type)">
+            <xsl:when test="contains ('isbn issn uri doi lccn uri local', $type)">
                 <dc:identifier>
                     <xsl:value-of select="$type"/>: <xsl:value-of select="."/>
                 </dc:identifier>
@@ -355,11 +355,13 @@
     </xsl:template>
 
     <xsl:template match="mods:location">
-        <dc:identifier>
-            <xsl:for-each select="mods:url">
-                <xsl:value-of select="."/>
-            </xsl:for-each>
-        </dc:identifier>
+        <xsl:if test="mods:url">
+            <dc:identifier>
+                <xsl:for-each select="mods:url">
+                    <xsl:value-of select="."/>
+                </xsl:for-each>
+            </dc:identifier>
+        </xsl:if>
     </xsl:template>
 
     <xsl:template match="mods:language">
