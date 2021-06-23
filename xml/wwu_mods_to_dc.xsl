@@ -42,10 +42,10 @@
     <xsl:template match="/">
         <xsl:choose>
             <xsl:when test="//mods:modsCollection">
-                <srw_dc:dcCollection xsi:schemaLocation="info:srw/schema/1/dc-schema https://www.loc.gov/standards/sru/recordSchemas/dc-schema.xsd">
+                <srw_dc:dcCollection xsi:schemaLocation="info:srw/schema/1/dc-schema http://www.loc.gov/standards/sru/recordSchemas/dc-schema.xsd">
                     <xsl:apply-templates/>
                     <xsl:for-each select="mods:modsCollection/mods:mods">
-                        <srw_dc:dc xsi:schemaLocation="info:srw/schema/1/dc-schema https://www.loc.gov/standards/sru/recordSchemas/dc-schema.xsd">
+                        <srw_dc:dc xsi:schemaLocation="info:srw/schema/1/dc-schema http://www.loc.gov/standards/sru/recordSchemas/dc-schema.xsd">
                             <xsl:apply-templates/>
                         </srw_dc:dc>
                     </xsl:for-each>
