@@ -42,10 +42,10 @@
     <xsl:template match="/">
         <xsl:choose>
             <xsl:when test="//mods:modsCollection">
-                <srw_dc:dcCollection xsi:schemaLocation="info:srw/schema/1/dc-schema http://www.loc.gov/standards/sru/dc-schema.xsd">
+                <srw_dc:dcCollection xsi:schemaLocation="info:srw/schema/1/dc-schema https://www.loc.gov/standards/sru/recordSchemas/dc-schema.xsd">
                     <xsl:apply-templates/>
                     <xsl:for-each select="mods:modsCollection/mods:mods">
-                        <srw_dc:dc xsi:schemaLocation="info:srw/schema/1/dc-schema http://www.loc.gov/standards/sru/dc-schema.xsd">
+                        <srw_dc:dc xsi:schemaLocation="info:srw/schema/1/dc-schema https://www.loc.gov/standards/sru/recordSchemas/dc-schema.xsd">
                             <xsl:apply-templates/>
                         </srw_dc:dc>
                     </xsl:for-each>
@@ -342,12 +342,12 @@
         <xsl:variable name="type" select="translate(@type,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')"/>
         <xsl:choose>
             <xsl:when test="contains ('isbn issn uri doi lccn uri local', $type)">
-                <dc:identifier>
+                <dc:identifier xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:srw_dc="info:srw/schema/1/dc-schema">
                     <xsl:value-of select="$type"/>: <xsl:value-of select="."/>
                 </dc:identifier>
             </xsl:when>
             <xsl:otherwise>
-                <dc:identifier>
+                <dc:identifier xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:srw_dc="info:srw/schema/1/dc-schema">
                     <xsl:value-of select="."/>
                 </dc:identifier>
             </xsl:otherwise>
@@ -356,7 +356,7 @@
 
     <xsl:template match="mods:location">
         <xsl:if test="mods:url">
-            <dc:identifier>
+            <dc:identifier xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:srw_dc="info:srw/schema/1/dc-schema">
                 <xsl:for-each select="mods:url">
                     <xsl:value-of select="."/>
                 </xsl:for-each>
