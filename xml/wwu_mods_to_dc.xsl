@@ -53,7 +53,10 @@
             </xsl:when>
             <xsl:otherwise>
                 <xsl:for-each select="mods:mods">
-                    <oai_dc:dc xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+                    <oai_dc:dc
+                        xmlns:dc="http://purl.org/dc/elements/1.1/"
+                        xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+                        xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
                         <xsl:apply-templates/>
                     </oai_dc:dc>
                 </xsl:for-each>
@@ -311,7 +314,7 @@
         </xsl:if>
         <xsl:if test=".='Text'">
             <dc:type>Text</dc:type>
-        </xsl:if>     
+        </xsl:if>
     </xsl:template>
 
     <xsl:template match="mods:physicalDescription">
