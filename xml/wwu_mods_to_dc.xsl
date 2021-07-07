@@ -56,6 +56,7 @@
                     <oai_dc:dc
                         xmlns:dc="http://purl.org/dc/elements/1.1/"
                         xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+                        xmlns:srw_dc="info:srw/schema/1/dc-schema"
                         xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
                         <xsl:apply-templates/>
                     </oai_dc:dc>
